@@ -597,6 +597,13 @@ fn getLinesChanged(
         }
         switch (try item.repo.getLinesChanged(arena, client, self.user)) {
             .ok => {},
+            // Empty repositories have no contributor stats
+            .no_content => {
+                std.log.info(
+                    "No contribution data for {s} (empty repository)",
+                    .{item.repo.name},
+                );
+            },
             // If we're hitting rate limits on this API, just clone the repo
             // locally to compute lines changed
             // https://docs.github.com/en/rest/using-the-rest-api/troubleshooting-the-rest-api?apiVersion=2026-03-10#rate-limit-errors
